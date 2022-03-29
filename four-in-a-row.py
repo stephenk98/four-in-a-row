@@ -41,12 +41,14 @@ class Board():
     def drop_piece(self, col: int) -> bool:
         # Get the next empty row of the given column
         row = self.open_rows[col]
-        # Check if the column still has empty slots
+        # Drop a piece in the given column if there are still empty slots
         if row >= 0:
             self.board[row][col] = self.get_player()
+            # Set the next open row for the given column to the row above
             self.open_rows[col] -= 1
+            # Switch turns
             self.turn += 1
-            # If a piece is dropped, check if the player won
+            # Check if the player won after they dropped a piece
             return self.check_win(row, col)
         # If the column is full, let the player know
         else:
@@ -81,6 +83,8 @@ class Board():
             x, y = direction[0]
             # The maximum distance from the origin we will search for each direction is the winning row size - 1 (e.g. 4 - 1 = 3)
             for dist_from_origin in range(self.winning_row_size-1):
+                
+                # Get the next adjacent slot in the current direction
                 next_row = row + (x * (dist_from_origin+1))
                 next_col = col + (y * (dist_from_origin+1))
                 
@@ -90,11 +94,16 @@ class Board():
                 # - Contains a non-matching piece
                 if not self.valid_slot(next_row, next_col) or self.board[next_row][next_col] != player:
                     break
+                
+                # Increment the number of matching pieces for the current direction if a matching piece is found
                 direction[1] += 1
         
         # Search through the direction pairs (i.e. vertical row, horizontal row, and diagonals) to determine whether the player has won
         for i in range(0, len(directions)-1, 2):
+            
+            # A player has won if the matching pieces in the direction pair is greater than or equal to the winning row size - 1
             if directions[i][1] + directions[i+1][1] >= self.winning_row_size-1:
+                # Show the status of the board and notify the players of the winner
                 self.display_board()
                 print(f"Player {player} wins!")
                 return True
@@ -108,6 +117,8 @@ def play_game() -> None:
     # Create a game board
     game_board = Board()
     game_over = False
+    
+    # Loop until a player has won or there is a draw
     while not game_over:
         # Display the status of the board with every turn
         game_board.display_board()
@@ -121,15 +132,18 @@ def play_game() -> None:
             print(f"Invalid input! Select a number between 0 and {game_board.cols - 1}")
             continue
 
-        # Check if the user selected a column within the bounds of the board
+        # If the user selected a column outside the bounds of the board, re-prompt input
         if col >= game_board.cols or col < 0:
             print(f"Invalid column! Select a number between 0 and {game_board.cols - 1}")
+        
+        # Drop a piece for the current player in the selected column if they selected a column within the bounds of the board
         else:
-            # Drop a piece for the respective player in the selected column
+            # End the game if a winner is found after the piece is dropped
             game_over = game_board.drop_piece(col)
         
         # End the game if there are no more empty slots and a winner hasn't been found
         if not any(' ' in slot for slot in game_board.board):
+            # Show the status of the board and notify the players that the game ended in a draw
             game_board.display_board()
             print("Draw! Neither player wins")
             return
