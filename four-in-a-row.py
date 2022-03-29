@@ -4,7 +4,7 @@ WINNING_ROW_SIZE = 4
 
 # Class representing the game board
 class Board():
-    def __init__(self, rows = NUM_ROWS, cols = NUM_COLS, winning_row_size = WINNING_ROW_SIZE):
+    def __init__(self, rows: int = NUM_ROWS, cols: int = NUM_COLS, winning_row_size: int = WINNING_ROW_SIZE) -> None:
         self.rows = rows
         self.cols = cols
         self.board = [[' ' for _ in range(cols)] for _ in range(rows)]
@@ -15,14 +15,14 @@ class Board():
         self.turn = 1
     
     # Function to display the board
-    def display_board(self):
+    def display_board(self) -> None:
         # Display the column numbers
         print("\n")
         for col in range(self.cols):
             print(f" ({col})", end="")
         print("\n")    
 
-        #Display board slots
+        # Display board slots
         for row in range(self.rows):
             print('|', end="")
             for col in range(self.cols):
@@ -30,7 +30,7 @@ class Board():
             print("\n")
     
     # Helper function that returns the player whose turn it is 
-    def get_player(self):
+    def get_player(self) -> int:
         return 1 if self.turn % 2 == 1 else 2
 
     # Helper function that determines whether an adjacent slot is within the bounds of the board
@@ -54,7 +54,7 @@ class Board():
             return False
 
     # Function that checks to see if there is a winner
-    def check_win(self, row: int, col: int):
+    def check_win(self, row: int, col: int) -> bool:
         # Identify the player that dropped the last piece
         player = self.board[row][col]
         # Test all 8 outward directions from the last dropped piece
@@ -104,7 +104,7 @@ class Board():
         
 
 # Game loop
-def play_game():
+def play_game() -> None:
     # Create a game board
     game_board = Board()
     game_over = False
